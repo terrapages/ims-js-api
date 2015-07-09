@@ -595,7 +595,7 @@ function getUsersDataInternal(endpoint, users, callback, errorCallback) {
 			},
 			error : function(xhr, ajaxOptions, thrownError) {
 				console.log(thrownError + ", " + ajaxOptions + ", " + getErrorMsg(xhr, 3));
-				errorCallback();
+				errorCallback(thrownError);
 				--ajaxCounter;
 				if (ajaxCounter === 0) {
 					callback(totalData);
