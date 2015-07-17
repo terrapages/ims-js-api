@@ -3,35 +3,6 @@
  */
 $.extend({
 
-
-	var socket = io.connect('http://192.168.2.139:3000', {resource: 'nodejs'});
-
-//the users array is filled with currently online friends when we receive
-//the new list from the server.
-	var usersSignedIn = [];
-
-	//Get the new list and pus a new object containing the user and the current app they are using
-	//onto the users array
-	socket.on('user list', function(data){
-		usersSignedIn = [];
-					for (var i = 0; i < data.length; i++) {
-						usersSignedIn.push({
-    					user: data[i].userID,
-    					app: data[i].currentlyLoggedIn
-  					});
-					}
-				});
-
-	//When a user logs in or out we ask the server for an updated list of friends
-	socket.on('user authenticated', function(data){
-	getCurrentlyLoggedInUsingWebsocket();
-	});
-	socket.on('user disconnected', function(data){
-	getCurrentlyLoggedInUsingWebsocket();
-	});
-
-
-	socket.emit('authenticate IMS',$.lv2.username, $.lv2.token, serviceKey);
 	/**
 	 * Setup storage for us to use within this users session.
 	 */
@@ -207,27 +178,6 @@ $.extend({
 		})
 	},
 
-	friendAuth : function (){
-		socket.on('user authenticated', function(data){
-          socket.emit('get list',person, token);
-        });
-	},
-
-	authWebSocket: function (auth, callback) {
-		socket.emit('authenticate',auth.person, auth ,appID);
-	},
-
-	/**
-	 * Authenticate the user via websockets
-	 *
-	 * @param auth -
-	 *            A JSON object with a username and password.
-	 */
-	authenticateWithWebsockets: function (auth, callback) {
-		socket.emit('authenticate',$.lv2.username, hashAuth(auth),Properties.APPLICATION_ID,serviceKey);
-
-	},
-
 	/**
 	 * Authenticate the user.
 	 *
@@ -304,7 +254,6 @@ $.extend({
 	},
 
 	logout: function () {
-		socket.emit('log out',$.lv2.username, $.lv2.token, serviceKey);
 		if ($.lv2.username != null) {
 			$.ajax({
 				type: 'GET',
@@ -373,10 +322,6 @@ $.extend({
 				error(thrownError);
 			}
 		});
-	},
-
-	getCurrentlyLoggedInUsingWebsocket: function () {
-		socket.emit('get list',$.lv2.username, $.lv2.token, serviceKey);
 	},
 
 	/**
